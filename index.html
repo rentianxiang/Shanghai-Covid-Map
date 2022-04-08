@@ -57,7 +57,7 @@
         })
     }
     async function getData() {
-        const response = await fetch('../data/2022-04-07.json')
+        const response = await fetch('./data/2022-04-07.json')
         const data = await response.json()
         return data
     }
