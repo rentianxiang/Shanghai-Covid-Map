@@ -16,25 +16,53 @@
         padding: 0px;
     }
 
-    #container {
+    body::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    #qqmap {
+        position: relative;
         width: 100%;
         height: 100%;
+    }
+
+    #footer {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        font-size: 14px;
+        background-color: white;
+        padding: 0 10px;
     }
 </style>
 
 <body onload="initMap()">
-    <div id="qqmap"></div>
+    <div id="qqmap">
+        <div id="footer">数据来自于上海市卫生健康委员会 4月7日（0-24时）本市各区确诊病例、无症状感染者居住地信息</div>
+    </div>
 </body>
 
 <script type="text/javascript">
     async function initMap() {
+        // 手机端强制横屏
+        screen.orientation.lock('landscape');
+        // 默认上海坐标
+        const position = { lat: 31.2, lng: 121.4 };
+        // 获取当前坐标
+        navigator.geolocation.getCurrentPosition(res => {
+            position.lat = res.coords.latitude
+            position.lng = res.coords.longitude
+        });
+        // 初始化腾讯地图
         const map = new TMap.Map("qqmap", {
             rotation: 0,
             pitch: 15,
-            zoom: 12,
-            center: new TMap.LatLng(31.2, 121.4)
+            zoom: 15,
+            center: new TMap.LatLng(position.lat, position.lng)
         });
+        // 获取静态数据
         const data = await getData();
+        // 添加地图marker
         const marker = new TMap.MultiMarker({
             id: "marker",
             map,
@@ -44,12 +72,17 @@
                 properties: { title: street }
             }))
         });
+        // 添加地图信息窗口
         const infoWindow = new TMap.InfoWindow({
             map: map,
-            position: new TMap.LatLng(39.984104, 116.307503),
+            position: new TMap.LatLng(position.lat, position.lng),
             offset: { x: 0, y: -32 }
         });
-        infoWindow.close()
+        // 点击map事件
+        map.on('click', function (event) {
+            infoWindow.close();
+        })
+        // 点击marker事件
         marker.on("click", function (event) {
             infoWindow.open();
             infoWindow.setPosition(event.geometry.position);
