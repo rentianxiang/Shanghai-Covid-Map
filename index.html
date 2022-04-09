@@ -52,18 +52,18 @@
 
 <script type="text/javascript">
     async function initMap() {
-        // 手机端强制横屏
-        screen.orientation.lock('landscape');
         // 默认上海坐标
         const position = { lat: 31.2, lng: 121.4 };
         // 初始化腾讯地图
         const map = new TMap.Map("qqmap", {
             rotation: 0,
             pitch: 15,
-            zoom: 15,
+            zoom: 2,
             center: new TMap.LatLng(position.lat, position.lng)
         });
         window.qqmap = map;
+        // 设置地图边界
+        map.setBoundary(new TMap.LatLngBounds(new TMap.LatLng(30.5, 120.5), new TMap.LatLng(32, 122.5)));
         // 获取静态数据
         const data = await getData();
         // 添加地图marker
