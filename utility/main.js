@@ -6,15 +6,15 @@ const { MongoClient, ObjectId } = require('mongodb');
 const mongoClient = new MongoClient(`mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@localhost:27017`);
 const crawler = require('./crawler')
 
-const date = '2022-04-07'
-const url = 'https://mp.weixin.qq.com/s/HTM47mUp0GF-tWXkPeZJlg'
+const date = '2022-04-08'
+const url = 'https://mp.weixin.qq.com/s/79NsKhMHbg09Y0xaybTXjA'
 
 main()
 async function main() {
     await initDb()
-    // await getRawData()
-    // await processRawData()
-    // await exportData()
+    await getRawData()
+    await processRawData()
+    await exportData()
     await mongoClient.close()
 }
 
@@ -48,7 +48,7 @@ async function processRawData() {
 // 导出数据
 async function exportData() {
     const data = await db.collection('shanghai').find().project({ _id: 0, d: '$district', s: '$street', lng: { $arrayElemAt: ['$location.coordinates', 0] }, lat: { $arrayElemAt: ['$location.coordinates', 1] } }).toArray()
-    fs.writeFileSync(path.join(__dirname, `../data/${date}.json`), JSON.stringify(data))
+    fs.writeFileSync(path.join(__dirname, '../data.json'), JSON.stringify(data))
 }
 
 // 使用腾讯地图API解析地址
