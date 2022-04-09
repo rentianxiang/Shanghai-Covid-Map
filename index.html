@@ -26,6 +26,14 @@
         height: 100%;
     }
 
+    #button {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        font-size: 20px;
+        z-index: 99999;
+    }
+
     #footer {
         position: absolute;
         bottom: 0;
@@ -37,9 +45,9 @@
 </style>
 
 <body onload="initMap()">
-    <div id="qqmap">
-        <div id="footer">数据来自于上海市卫生健康委员会 4月7日（0-24时）本市各区确诊病例、无症状感染者居住地信息</div>
-    </div>
+    <div id="qqmap" />
+    <input type="button" id="button" value="前往当前位置" onclick="toCurrentPosition()" />
+    <div id="footer">数据来自于上海市卫生健康委员会 4月7日（0-24时）本市各区确诊病例、无症状感染者居住地信息</div>
 </body>
 
 <script type="text/javascript">
@@ -48,11 +56,6 @@
         screen.orientation.lock('landscape');
         // 默认上海坐标
         const position = { lat: 31.2, lng: 121.4 };
-        // 获取当前坐标
-        navigator.geolocation.getCurrentPosition(res => {
-            position.lat = res.coords.latitude
-            position.lng = res.coords.longitude
-        });
         // 初始化腾讯地图
         const map = new TMap.Map("qqmap", {
             rotation: 0,
@@ -60,6 +63,7 @@
             zoom: 15,
             center: new TMap.LatLng(position.lat, position.lng)
         });
+        window.qqmap = map;
         // 获取静态数据
         const data = await getData();
         // 添加地图marker
@@ -75,9 +79,10 @@
         // 添加地图信息窗口
         const infoWindow = new TMap.InfoWindow({
             map: map,
-            position: new TMap.LatLng(position.lat, position.lng),
+            position: new TMap.LatLng(39.984104, 116.307503),
             offset: { x: 0, y: -32 }
         });
+        infoWindow.close();
         // 点击map事件
         map.on('click', function (event) {
             infoWindow.close();
@@ -93,6 +98,12 @@
         const response = await fetch('./data/2022-04-07.json')
         const data = await response.json()
         return data
+    }
+    function toCurrentPosition() {
+        // 获取当前坐标
+        navigator.geolocation.getCurrentPosition(res => {
+            window.qqmap.setCenter(new TMap.LatLng(res.coords.latitude, res.coords.longitude))
+        });
     }
 </script>
 
