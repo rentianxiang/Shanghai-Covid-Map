@@ -6,8 +6,8 @@ const { MongoClient, ObjectId } = require('mongodb');
 const mongoClient = new MongoClient(`mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@localhost:27017`);
 const crawler = require('./crawler')
 
-const date = '2022-04-08'
-const url = 'https://mp.weixin.qq.com/s/79NsKhMHbg09Y0xaybTXjA'
+const date = '2022-04-11'
+const url = 'https://mp.weixin.qq.com/s/vxFiV2HeSvByINUlTmFKZA'
 
 main()
 async function main() {
